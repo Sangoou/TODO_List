@@ -1,0 +1,64 @@
+extends layout
+
+block content
+  .container
+    h1.text-center TODO List
+      form(action="/users/test" method="post")
+        button(onClick="submint()")테스트
+  .container
+    .container(style="width:60%; float:left")
+      div
+        button.btn(onclick="list_move('up')") △
+        button.btn(onclick="list_move('down')") ▽
+        button.btn.btn-primary(onclick="list_add()") 추가
+        button.btn.btn-danger(onclick="list_move('remove')")#delete 삭제
+        button.btn.btn-warning(disabled="" onclick="list_modify()")#modify 수정
+        form(action="/users/move" method="post")#move
+          input(type="hidden" name="work")#button_work
+          input(type="hidden" name="checkList")#check_list
+        form(action="/users/alarm" method="post")#alarm
+          input(type="hidden" name="alarm")#alarm_list
+      table.table.table-hover.text-center
+        form(action="/users/complete" method="post")#complete
+          input(type="hidden" name="complete")#complete_row
+        thead.thead-dark
+          tr
+            th(style="width:20px")
+              input(type="checkbox" onClick="check_all(this)")#checkAll
+            th(style="width:60px") 순위
+            th 제목
+            th(style="width:150px") 기한
+            th(style="width:60px") 완료
+        tbody
+          for da in data
+            tr(id="row"+da.index onclick="show_detail(this)")
+              th(onclick="event.cancelBubble = true")
+                input(type="checkbox" id="check"+da.index)
+              th #{da.index/2}
+              th(id="title"+da.index) #{da.title}
+              th(id="date"+da.index) #{da.date}
+              th
+                if da.complete
+                  |완료!
+                else
+                  button.btn.btn-success(id="complete"+da.index onclick="event.cancelBubble=true;list_complete(this)") 완료!
+              th(style="display:none" id="isComlete"+da.index) #{da.complete}
+              th(style="display:none" id="content"+da.index) #{da.content}
+              th(style="display:none" id="alarm"+da.index) #{da.alarm}
+
+    .container(style="width:40%; float:right")
+      form.form-group(action="/users/input" method="post")#input
+        |제목: 
+        input(style="width:80%" name="input_title")#title
+        br
+        br
+        |내용:
+        textarea(style="width:100%" rows="18" cols="80" name="input_content")#content
+        br
+        br
+        |기한: 
+        input(style="width:80%" type="datetime-local" name="input_date")#date
+        input(type="hidden" value=-1 name="input_index")#index
+  script(type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js")
+  script(type="text/javascript" src="/javascripts/bootstrap.js")
+  script(type="text/javascript" src="/javascripts/function.js")
